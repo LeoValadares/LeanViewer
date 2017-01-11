@@ -1,0 +1,22 @@
+﻿<Window x:Class="LeanViewer.LogsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LeanViewer"
+        mc:Ignorable="d"
+        Title="LeanViewer" Height="480" Width="640"
+        Closing="Window_Closing">
+    <Grid>
+        <ListView x:Name="MessagesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" 
+                  SizeChanged="MessagesListView_SizeChanged" ItemsSource="{Binding Logs}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding DateLogged}"/>
+                    <GridViewColumn Header="Message" Width="Auto" DisplayMemberBinding="{Binding Message}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+    </Grid>
+</Window>
