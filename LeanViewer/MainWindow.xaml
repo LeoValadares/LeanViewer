@@ -8,8 +8,14 @@
         Title="LeanViewer" Height="480" Width="640"
         Closing="Window_Closing">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        
         <ListView x:Name="MessagesListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" 
-                  SizeChanged="MessagesListView_SizeChanged" ItemsSource="{Binding Logs}">
+                  SizeChanged="MessagesListView_SizeChanged" ItemsSource="{Binding Logs}" Grid.Row="0"
+                  MouseDoubleClick="MessagesListView_OnMouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Date" Width="Auto" DisplayMemberBinding="{Binding DateLogged}"/>
@@ -17,6 +23,11 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
+        <Grid Row="1" Margin="10,0,10,0">
+            <Button x:Name="CleanLogsButton" Width="100" Height="30" 
+                    HorizontalAlignment="Right" VerticalAlignment="Center" Content="Clean Logs" Click="CleanLogsButton_Click"></Button>
+        </Grid>
 
     </Grid>
 </Window>

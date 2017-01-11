@@ -62,5 +62,16 @@ namespace LeanViewer
             _httpServer.Stop();
             _httpServerThread.Abort();
         }
+
+        private void CleanLogsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Logs.Clear();
+        }
+
+        private void MessagesListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var source = ((ListView)sender).SelectedItem;
+            var window = new LogsWindow();
+        }
     }
 }
