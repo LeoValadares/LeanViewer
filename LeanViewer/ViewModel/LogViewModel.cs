@@ -1,24 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using LeanViewer.Model;
+using LeanViewer.Network;
 
-namespace LeanViewer
+namespace LeanViewer.ViewModel
 {
     class LogViewModel : IDisposable
     {
+        private static LogViewModel _current;
+        public static LogViewModel Current
+        {
+            get { return _current ?? (_current = new LogViewModel()); }
+        }
         private SynchronizationContext _syncContext;
-        public ObservableCollection<Log> Logs { get; set; }
+        public ObservableCollection<LogScreenObject> Logs { get; set; }
         private HttpServer _httpServer;
         private Thread _httpServerThread;
+        private FilterViewModel _filterViewModel;
 
         public LogViewModel()
         {
             _syncContext = SynchronizationContext.Current;
-            Logs = new ObservableCollection<Log>();
+            Logs = new ObservableCollection<LogScreenObject>();
+            _filterViewModel = FilterViewModel.Current;
             _httpServer = HttpServer.Current;
             _httpServer.OnHttpMessage += OnHttpMessage;
             _httpServer.OnServerMessage += OnServerMessage;
@@ -43,7 +48,8 @@ namespace LeanViewer
 
         private void AddLogToScreen(Log log)
         {
-            _syncContext.Send(x => Logs.Add(log), null);
+            var logOnScreen = new LogScreenObject(log, true);
+            _syncContext.Send(x => Logs.Add(logOnScreen), null);
         }
 
         public void ClearScreen()

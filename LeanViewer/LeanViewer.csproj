@@ -71,8 +71,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\Filter.cs" />
+    <Compile Include="Model\LogScreenObject.cs" />
     <Compile Include="Network\HttpServer.cs" />
     <Compile Include="Model\Log.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModel\FilterViewModel.cs" />
     <Compile Include="ViewModel\LogViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

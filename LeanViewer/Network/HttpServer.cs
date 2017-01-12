@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using LeanViewer.Model;
 
-namespace LeanViewer
+namespace LeanViewer.Network
 {
     public delegate void HttpMessageDelegate(Log args);
     public delegate void ServerMessageDelegate(Log args);
@@ -65,17 +63,24 @@ namespace LeanViewer
         public void ProcessMessage(HttpListenerContext listenerContext)
         {
             string msg;
-            using (var sr = new StreamReader(listenerContext.Request.InputStream))
+            try
             {
-                msg = sr.ReadToEnd();
+                using (var sr = new StreamReader(listenerContext.Request.InputStream))
+                {
+                    msg = sr.ReadToEnd();
+                }
+                byte[] b = Encoding.UTF8.GetBytes("ok.");
+                listenerContext.Response.StatusCode = 200;
+                listenerContext.Response.KeepAlive = false;
+                listenerContext.Response.ContentLength64 = b.Length;
+                var output = listenerContext.Response.OutputStream;
+                output.Write(b, 0, b.Length);
+                listenerContext.Response.Close();
             }
-            byte[] b = Encoding.UTF8.GetBytes("ok.");
-            listenerContext.Response.StatusCode = 200;
-            listenerContext.Response.KeepAlive = false;
-            listenerContext.Response.ContentLength64 = b.Length;
-            var output = listenerContext.Response.OutputStream;
-            output.Write(b, 0, b.Length);
-            listenerContext.Response.Close();
+            catch (Exception)
+            {
+                msg = "Error receiving mesage";
+            }
             RegisterHttpMessage(msg);
         }
 

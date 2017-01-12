@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace LeanViewer
+namespace LeanViewer.Model
 {
     public class Log
     {
@@ -14,7 +10,7 @@ namespace LeanViewer
 
         public Log(DateTime dateLogged, string message)
         {
-            DateLogged = dateLogged.ToString("MM/dd/yyyy HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            DateLogged = dateLogged.ToString("dd/MM/yyyy HH:mm:ss.fff", CultureInfo.InvariantCulture);
             Message = message;
         }
     }
