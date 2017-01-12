@@ -71,7 +71,6 @@ namespace LeanViewer
         private void MessagesListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var source = ((ListView)sender).SelectedItem;
-            var window = new LogsWindow();
         }
     }
 }
