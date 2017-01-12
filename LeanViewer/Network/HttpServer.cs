@@ -10,9 +10,17 @@ using System.Threading.Tasks;
 namespace LeanViewer
 {
     public delegate void HttpMessageDelegate(Log args);
+    public delegate void ServerMessageDelegate(Log args);
+
     public class HttpServer
     {
+        private static HttpServer _current;
+        public static HttpServer Current
+        {
+            get { return _current ?? (_current = new HttpServer()); }
+        }
         public event HttpMessageDelegate OnHttpMessage = delegate { };
+        public event ServerMessageDelegate OnServerMessage = delegate { };
 
         private int _port = 8000;
         private string _server = "*";
@@ -26,17 +34,15 @@ namespace LeanViewer
         private HttpListener _httpListener;
         private bool _running;
 
-        public HttpServer()
+        public HttpServer() { }
+
+        public void Start()
         {
             _running = true;
             _httpListener = new HttpListener();
             _httpListener.Prefixes.Add(_serverUrl);
             _httpListener.Start();
-        }
-
-        public void Start()
-        {
-            RegisterMessage("HttpListener running...");
+            RegisterServerMessage("HttpListener running...");
             while (_running)
             {
                 try
@@ -50,10 +56,10 @@ namespace LeanViewer
 
         public void Stop()
         {
-            RegisterMessage("Cleaning up");
+            RegisterServerMessage("Cleaning up");
             _running = false;
             _httpListener.Close();
-            RegisterMessage("Bye!!!");
+            RegisterServerMessage("Bye!!!");
         }
 
         public void ProcessMessage(HttpListenerContext listenerContext)
@@ -70,18 +76,29 @@ namespace LeanViewer
             var output = listenerContext.Response.OutputStream;
             output.Write(b, 0, b.Length);
             listenerContext.Response.Close();
-            RegisterMessage(msg);
+            RegisterHttpMessage(msg);
         }
 
-        public void RegisterMessage(string message)
+        public void RegisterHttpMessage(string message)
         {
             var log = new Log(DateTime.Now, message);
-            OnHttpMessage(log);
+            RegisterHttpMessage(log);
         }
 
-        public void RegisterMessage(Log logMessage)
+        public void RegisterHttpMessage(Log logMessage)
         {
             OnHttpMessage(logMessage);
+        }
+
+        public void RegisterServerMessage(string message)
+        {
+            var log = new Log(DateTime.Now, message);
+            RegisterServerMessage(log);
+        }
+
+        public void RegisterServerMessage(Log serverLog)
+        {
+            OnServerMessage(serverLog);
         }
     }
 }

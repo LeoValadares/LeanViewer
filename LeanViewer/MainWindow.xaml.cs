@@ -22,32 +22,18 @@ namespace LeanViewer
     /// </summary>
     public partial class LogsWindow : Window
     {
-        public ObservableCollection<Log> Logs { get; set; }
-        private HttpServer _httpServer;
-        private Thread _httpServerThread;
-        private SynchronizationContext _syncContext;
+        private readonly LogViewModel _logViewModel;
 
         public LogsWindow()
         {
-            InitializeComponent();
-            _syncContext = SynchronizationContext.Current;
-            Logs = new ObservableCollection<Log>();
-            _httpServer = new HttpServer();
-            _httpServer.OnHttpMessage += OnHttpMessageReceived;
-            this.DataContext = this;
-            _httpServerThread = new Thread(() => _httpServer.Start());
-            _httpServerThread.Start();
-        }
-
-        private void OnHttpMessageReceived(Log logMessage)
-        {
-            _syncContext.Send(x => Logs.Add(logMessage), null);
+            _logViewModel = new LogViewModel();
+            this.DataContext = _logViewModel;
         }
 
         private void MessagesListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
+            ListView listView = (ListView)sender;
+            GridView gView = (GridView)listView.View;
 
             var workingWidth = listView.ActualWidth - 35; // take into account vertical scrollbar
             var col1 = 0.25;
@@ -59,19 +45,17 @@ namespace LeanViewer
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _httpServer.Stop();
-            _httpServerThread.Abort();
+            _logViewModel.Dispose();
         }
 
         private void CleanLogsButton_Click(object sender, RoutedEventArgs e)
         {
-            Logs.Clear();
+            _logViewModel.ClearScreen();
         }
 
         private void MessagesListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var source = ((ListView)sender).SelectedItem;
-            var window = new LogsWindow();
+            
         }
     }
 }

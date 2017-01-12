@@ -71,8 +71,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HttpServer.cs" />
-    <Compile Include="Log.cs" />
+    <Compile Include="Network\HttpServer.cs" />
+    <Compile Include="Model\Log.cs" />
+    <Compile Include="ViewModel\LogViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
