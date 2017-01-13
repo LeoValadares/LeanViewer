@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using LeanViewer.Model;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace LeanViewer.ViewModel
 {
@@ -49,11 +50,13 @@ namespace LeanViewer.ViewModel
                 case FilterType.Contains:
                     var contains = log.Message.Contains(filter.FilterString);
                     if (filter.VisibilityType == VisibilityType.Reveal && contains) return true;
+                    if (filter.VisibilityType == VisibilityType.Hide && !contains) return true;
                     else return false;
                     break;
                 case FilterType.Exactly:
                     var exactly = log.Message == filter.FilterString;
                     if (filter.VisibilityType == VisibilityType.Reveal && exactly) return true;
+                    if (filter.VisibilityType == VisibilityType.Hide && !exactly) return true;
                     else return false;
                     break;
                 default:
@@ -74,6 +77,19 @@ namespace LeanViewer.ViewModel
         public void Remove(Filter selectedItem)
         {
             Filters.Remove(selectedItem);
+        }
+
+        public void RestoreFromFile(string fileContents)
+        {
+            var filters = JsonConvert.DeserializeObject<List<Filter>>(fileContents);
+            filters.ForEach(x => Filters.Add(x));
+        }
+
+        public string SerializeCurrentFilters()
+        {
+            var filters = Filters.ToList();
+            var serialized = JsonConvert.SerializeObject(filters, Formatting.Indented);
+            return serialized;
         }
     }
 }

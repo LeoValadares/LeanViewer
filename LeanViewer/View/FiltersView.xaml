@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LeanViewer.View"
         mc:Ignorable="d"
-        Title="Filters" Height="480" Width="640">
+        Title="Filters" Height="360" Width="480"
+        Closing="FiltersView_OnClosing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
@@ -29,6 +30,8 @@
         </ListView>
 
         <StackPanel Grid.Row="1" Margin="10,10,10,10" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="LoadFiltersButton" Width="100" Height="30" Content="Load from file" Click="LoadFiltersButton_OnClick"></Button>
+            <Button x:Name="SaveFiltersButton" Width="100" Height="30" Content="Save to file" Click="SaveFiltersButton_OnClick"></Button>
             <Button x:Name="ClearFiltersButton" Width="100" Height="30" Content="Clear Filters" Click="ClearFiltersButton_Click"></Button>
             <Button x:Name="AddFilterButton" Width="100" Height="30" Content="Add Filter" Click="AddFilterButton_Click"></Button>
         </StackPanel>

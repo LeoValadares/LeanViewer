@@ -7,7 +7,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:enums="clr-namespace:LeanViewer.Model"
         mc:Ignorable="d"
-        Title="CreateFilterView" Height="200" Width="300">
+        Title="Create Filter" Height="180" Width="300">
 
     <Window.Resources>
         <ObjectDataProvider x:Key="FilterTypeEnum" MethodName="GetValues"
@@ -41,7 +41,6 @@
             <TextBox x:Name="FilterStringTextBox" Text="{Binding _currentFilterString}"></TextBox>
         </DockPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="CancelButton" Width="50" Height="30" Content="Cancel"></Button>
             <Button x:Name="CreateFilterButton" Width="70" Height="30" Content="Create Filter" Click="CreateFilterButton_Click"></Button>
         </StackPanel>
     </StackPanel>

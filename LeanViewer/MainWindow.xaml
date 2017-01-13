@@ -15,6 +15,11 @@
 
         <ListView x:Name="MessagesListView" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" 
                   SizeChanged="MessagesListView_SizeChanged" ItemsSource="{Binding Logs}" MouseDoubleClick="MessagesListView_OnMouseDoubleClick">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Filter Selected" Click="FilterSelected_OnClick"></MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.View>
                 <GridView>
                     <GridView.AllowsColumnReorder>True</GridView.AllowsColumnReorder>
@@ -25,8 +30,8 @@
         </ListView>
 
         <StackPanel Grid.Row="1" Margin="10,10,10,10" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="Filters" Width="100" Height="30" Content="Filters" Click="FiltersButton_Click"></Button>
             <Button x:Name="CleanLogsButton" Width="100" Height="30" Content="Clean Logs" Click="CleanLogsButton_Click"></Button>
+            <Button x:Name="Filters" Width="100" Height="30" Content="Filters" Click="FiltersButton_Click"></Button>
         </StackPanel>
 
     </Grid>

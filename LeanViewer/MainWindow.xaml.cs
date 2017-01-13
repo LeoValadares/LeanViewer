@@ -52,5 +52,10 @@ namespace LeanViewer
             var filtersWindow = new FiltersView {Owner = this};
             filtersWindow.Show();
         }
+
+        private void FilterSelected_OnClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }

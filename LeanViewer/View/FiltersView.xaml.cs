@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
+using System.Windows.Media.Animation;
 using LeanViewer.Model;
 using LeanViewer.ViewModel;
+using Microsoft.Win32;
 
 namespace LeanViewer.View
 {
@@ -13,6 +18,7 @@ namespace LeanViewer.View
     public partial class FiltersView : Window
     {
         private FilterViewModel _filterViewModel;
+        
         public FiltersView()
         {
             InitializeComponent();
@@ -35,6 +41,38 @@ namespace LeanViewer.View
             gView.Columns[2].Width = workingWidth * col3;
         }
 
+        private void LoadFiltersButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            try
+            {
+                StreamReader sr = new StreamReader(ofd.FileName);
+                _filterViewModel.RestoreFromFile(sr.ReadToEnd());
+            }
+            catch (Exception exception)
+            {
+                var msgBox = MessageBox.Show(this, "Houve um erro lendo o arquivo");
+            }
+        }
+
+        private void SaveFiltersButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var objectToSave = _filterViewModel.SerializeCurrentFilters();
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                DefaultExt = ".json",
+                Filter = "JavaScript Object Notation File | *.json"
+            };
+            var result = sfd.ShowDialog();
+
+            if (result == true)
+            {
+                var fileName = sfd.FileName;
+                File.WriteAllText(fileName, objectToSave);
+            }
+        }
+
         private void ClearFiltersButton_Click(object sender, RoutedEventArgs e)
         {
             _filterViewModel.ClearFilters();
@@ -48,6 +86,13 @@ namespace LeanViewer.View
 
         private void ContextMenuDelete_Click(object sender, RoutedEventArgs e)
         {
+            var selectedFilters = (IList) FiltersListView.SelectedItems;
+            selectedFilters.Cast<Filter>().ToList().ForEach(x => _filterViewModel.Remove(x));
+        }
+
+        private void FiltersView_OnClosing(object sender, CancelEventArgs e)
+        {
+            if(Owner != null) Owner.Focus();
         }
     }
 }
