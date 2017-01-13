@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using LeanViewer.View;
 using LeanViewer.ViewModel;
 
 namespace LeanViewer
@@ -44,6 +45,12 @@ namespace LeanViewer
         private void MessagesListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             
+        }
+
+        private void FiltersButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filtersWindow = new FiltersView {Owner = this};
+            filtersWindow.Show();
         }
     }
 }

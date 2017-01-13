@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Specialized;
 using LeanViewer.Model;
+using System.Linq;
 
 namespace LeanViewer.ViewModel
 {
+    public delegate void FiltersUpdatedEventHandler();
     public class FilterViewModel
     {
+        public event FiltersUpdatedEventHandler FiltersUpdatedEvent = delegate { };
+
         private static FilterViewModel _current;
         public static FilterViewModel Current
         {
@@ -19,29 +21,59 @@ namespace LeanViewer.ViewModel
 
         public ObservableCollection<Filter> Filters { get; set; }
 
-        public bool GetLogVisibility(Log log)
+        public FilterViewModel()
         {
-            foreach (var filter in Filters)
-            {
-                if (IsVisible(filter, log)) return false;
-            }
-            return true;
+            Filters = new ObservableCollection<Filter>();
+            Filters.CollectionChanged += OnFiltersUpdated;
         }
 
-        private bool IsVisible(Filter filter, Log log)
+        private void OnFiltersUpdated(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            FiltersUpdatedEvent();
+        }
+
+        public bool IsVisible(Log log)
+        {
+            if (Filters.Count < 1) return true;
+            foreach (var filter in Filters)
+            {
+                if (IsVisible(filter, log)) return true;
+            }
+            return false;
+        }
+
+        private static bool IsVisible(Filter filter, Log log)
         {
             switch (filter.FilterType)
             {
                 case FilterType.Contains:
-                    var contains = log.Message.Contains(filter.StringToFilter);
-                    if(filter.VisibilityType == VisibilityType.Reveal)
+                    var contains = log.Message.Contains(filter.FilterString);
+                    if (filter.VisibilityType == VisibilityType.Reveal && contains) return true;
+                    else return false;
                     break;
                 case FilterType.Exactly:
-                    return log.Message == filter.StringToFilter;
+                    var exactly = log.Message == filter.FilterString;
+                    if (filter.VisibilityType == VisibilityType.Reveal && exactly) return true;
+                    else return false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        public void AddFilter(Filter filterToAdd)
+        {
+            Filters.Add(filterToAdd);
+        }
+
+        public void ClearFilters()
+        {
+            Filters.Clear();
+        }
+
+        public void Remove(Filter selectedItem)
+        {
+            Filters.Remove(selectedItem);
         }
     }
 }

@@ -16,13 +16,13 @@
     {
         public FilterType FilterType { get; set; }
         public VisibilityType VisibilityType { get; set; }
-        public string StringToFilter { get; set; }
+        public string FilterString { get; set; }
 
-        public Filter(FilterType filterType, VisibilityType visibilityType, string stringToFilter)
+        public Filter(FilterType filterType, VisibilityType visibilityType, string filterString)
         {
             FilterType = filterType;
             VisibilityType = visibilityType;
-            StringToFilter = stringToFilter;
+            FilterString = filterString;
         }
     }
 }

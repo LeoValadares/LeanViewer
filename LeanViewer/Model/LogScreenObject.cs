@@ -14,15 +14,15 @@ namespace LeanViewer.Model
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly Log _underlyingLog;
+        public Log UnderlyingLog { get; set; }
         public string DateLogged
         {
-            get { return _underlyingLog.DateLogged; }
+            get { return UnderlyingLog.DateLogged; }
             private set { }
         }
         public string Message
         {
-            get { return _underlyingLog.Message; }
+            get { return UnderlyingLog.Message; }
             private set { }
         }
         private bool _isVisible;
@@ -39,7 +39,7 @@ namespace LeanViewer.Model
 
         public LogScreenObject(Log underlyingLog, bool isVisible)
         {
-            _underlyingLog = underlyingLog;
+            UnderlyingLog = underlyingLog;
             IsVisible = isVisible;
         }
 

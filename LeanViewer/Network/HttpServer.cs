@@ -7,9 +7,8 @@ using LeanViewer.Model;
 
 namespace LeanViewer.Network
 {
-    public delegate void HttpMessageDelegate(Log args);
-    public delegate void ServerMessageDelegate(Log args);
-
+    public delegate void HttpMessageReceivedEventHandler(Log args);
+    public delegate void ServerMessageEventHandler(Log args);
     public class HttpServer
     {
         private static HttpServer _current;
@@ -17,8 +16,8 @@ namespace LeanViewer.Network
         {
             get { return _current ?? (_current = new HttpServer()); }
         }
-        public event HttpMessageDelegate OnHttpMessage = delegate { };
-        public event ServerMessageDelegate OnServerMessage = delegate { };
+        public event HttpMessageReceivedEventHandler HttpMessageReceivedEvent = delegate { };
+        public event ServerMessageEventHandler ServerMessageEvent = delegate { };
 
         private int _port = 8000;
         private string _server = "*";
@@ -92,7 +91,7 @@ namespace LeanViewer.Network
 
         public void RegisterHttpMessage(Log logMessage)
         {
-            OnHttpMessage(logMessage);
+            HttpMessageReceivedEvent(logMessage);
         }
 
         public void RegisterServerMessage(string message)
@@ -103,7 +102,7 @@ namespace LeanViewer.Network
 
         public void RegisterServerMessage(Log serverLog)
         {
-            OnServerMessage(serverLog);
+            ServerMessageEvent(serverLog);
         }
     }
 }

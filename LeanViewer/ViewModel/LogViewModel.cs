@@ -24,26 +24,36 @@ namespace LeanViewer.ViewModel
             _syncContext = SynchronizationContext.Current;
             Logs = new ObservableCollection<LogScreenObject>();
             _filterViewModel = FilterViewModel.Current;
+            _filterViewModel.FiltersUpdatedEvent += RescanLogVisibility;
             _httpServer = HttpServer.Current;
-            _httpServer.OnHttpMessage += OnHttpMessage;
-            _httpServer.OnServerMessage += OnServerMessage;
+            _httpServer.HttpMessageReceivedEvent += HttpMessageReceivedEvent;
+            _httpServer.ServerMessageEvent += ServerMessageEvent;
             _httpServerThread = new Thread(() => _httpServer.Start());
             _httpServerThread.Start();
         }
 
-        private void OnHttpMessage(Log log)
+        private void HttpMessageReceivedEvent(Log log)
         {
             LogSink(log);
         }
 
-        private void OnServerMessage(Log log)
+        private void ServerMessageEvent(Log log)
         {
             LogSink(log);
         }
 
         private void LogSink(Log log)
         {
+            if (!_filterViewModel.IsVisible(log)) return;
             AddLogToScreen(log);
+        }
+
+        private void RescanLogVisibility()
+        {
+            foreach (var logScreenObject in Logs)
+            {
+                logScreenObject.IsVisible = _filterViewModel.IsVisible(logScreenObject.UnderlyingLog);
+            }
         }
 
         private void AddLogToScreen(Log log)
