@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using LeanViewer.Model;
 using LeanViewer.View;
 using LeanViewer.ViewModel;
 
@@ -44,7 +45,17 @@ namespace LeanViewer
 
         private void MessagesListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            
+            var listView = (ListView)sender;
+            if (listView.SelectedItems.Count == 1)
+            {
+                var logView = new LogView((listView.SelectedItems[0] as LogScreenObject).UnderlyingLog)
+                {
+                    Owner = this
+                };
+
+                logView.Show();
+            }
+
         }
 
         private void FiltersButton_Click(object sender, RoutedEventArgs e)

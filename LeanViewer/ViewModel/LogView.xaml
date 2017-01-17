@@ -1,0 +1,15 @@
+﻿<Window x:Class="LeanViewer.ViewModel.LogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="LogView" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="6*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="10,10,10,10" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" 
+                   Text="{Binding DateLogged}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <TextBlock Grid.Row="1" Margin="10,10,10,10" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" 
+                   Text="{Binding Message}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+    </Grid>
+</Window>
