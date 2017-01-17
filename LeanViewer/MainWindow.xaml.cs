@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using LeanViewer.Model;
@@ -55,7 +58,6 @@ namespace LeanViewer
 
                 logView.Show();
             }
-
         }
 
         private void FiltersButton_Click(object sender, RoutedEventArgs e)
@@ -67,6 +69,16 @@ namespace LeanViewer
         private void FilterSelected_OnClick(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        private void CopyLogsToClipboard_OnClick(object sender, RoutedEventArgs e)
+        {
+            var selectedItems = MessagesListView.SelectedItems;
+            if (selectedItems.Count < 1)
+                return;
+            IEnumerable<Log> logs = selectedItems.Cast<LogScreenObject>().Select(x => x.UnderlyingLog).ToList();
+            string logsAsString = _logViewModel.SerializeLogs(logs);
+            Clipboard.SetText(logsAsString);
         }
     }
 }

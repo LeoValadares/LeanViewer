@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net.Mime;
 using System.Threading;
 using LeanViewer.Model;
 using LeanViewer.Network;
+using Newtonsoft.Json;
 
 namespace LeanViewer.ViewModel
 {
@@ -71,6 +75,11 @@ namespace LeanViewer.ViewModel
         {
             _httpServer.Stop();
             _httpServerThread.Join();
+        }
+
+        public string SerializeLogs(IEnumerable<Log> logs)
+        {
+            return JsonConvert.SerializeObject(logs, Formatting.Indented);
         }
     }
 }

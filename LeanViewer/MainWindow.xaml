@@ -18,6 +18,7 @@
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Filter Selected" Click="FilterSelected_OnClick"></MenuItem>
+                    <MenuItem Header="Copy to clipboard" Click="CopyLogsToClipboard_OnClick"></MenuItem>
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.View>

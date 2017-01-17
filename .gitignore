@@ -251,3 +251,7 @@ paket-files/
 .idea/
 *.sln.iml
 /packages/Newtonsoft.Json.9.0.1
+/Last Working Build
+/LeanViewer.exe.config
+/LeanViewer.vshost.exe.config
+/LeanViewer.vshost.exe.manifest
