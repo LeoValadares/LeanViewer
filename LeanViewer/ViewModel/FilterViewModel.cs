@@ -35,12 +35,13 @@ namespace LeanViewer.ViewModel
 
         public bool IsVisible(Log log)
         {
+            bool isVisible = true;
             if (Filters.Count < 1) return true;
             foreach (var filter in Filters)
             {
-                if (IsVisible(filter, log)) return true;
+                isVisible &= IsVisible(filter, log);
             }
-            return false;
+            return isVisible;
         }
 
         private static bool IsVisible(Filter filter, Log log)
