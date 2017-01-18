@@ -30,7 +30,7 @@ namespace LeanViewer.ViewModel
 
         private void OnFiltersUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Reset)
+            if (e.Action != NotifyCollectionChangedAction.Add)
             {
                 FiltersUpdatedEvent();
             }
