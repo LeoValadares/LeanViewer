@@ -57,9 +57,12 @@ namespace LeanViewer.ViewModel
 
         private void AddLogToScreen(Log log)
         {
-            if (!_filterViewModel.IsVisible(log)) return;
-            var logOnScreen = new LogScreenObject(log, true);
-            VisibleLogs.Add(logOnScreen);
+            lock (_visibleLogsLock)
+            {
+                if (!_filterViewModel.IsVisible(log)) return;
+                var logOnScreen = new LogScreenObject(log, true);
+                VisibleLogs.Add(logOnScreen); 
+            }
         }
 
         private void StoreLog(Log log)
@@ -70,16 +73,22 @@ namespace LeanViewer.ViewModel
 
         private void RescanLogVisibility()
         {
-            Parallel.ForEach<LogScreenObject>(_allLogs, x => x.IsVisible = _filterViewModel.IsVisible(x.UnderlyingLog));
-            VisibleLogs.Clear();
-            _allLogs.Where(x => x.IsVisible).ToList().ForEach(y => VisibleLogs.Add(y));
+            lock (_visibleLogsLock)
+            {
+                Parallel.ForEach<LogScreenObject>(_allLogs, x => x.IsVisible = _filterViewModel.IsVisible(x.UnderlyingLog));
+                VisibleLogs.Clear();
+                _allLogs.Where(x => x.IsVisible).ToList().ForEach(y => VisibleLogs.Add(y)); 
+            }
         }
 
         public void ClearScreen()
         {
-            var toRemove = _allLogs.Where(x => VisibleLogs.Contains(x)).ToList();
-            toRemove.ForEach(x => _allLogs.Remove(x));
-            VisibleLogs.Clear();
+            lock (_visibleLogsLock)
+            {
+                var toRemove = _allLogs.Where(x => VisibleLogs.Contains(x)).ToList();
+                toRemove.ForEach(x => _allLogs.Remove(x));
+                VisibleLogs.Clear(); 
+            }
         }
 
         public void Dispose()

@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\ObservableCollectionExtensions.cs" />
     <Compile Include="View\LogView.xaml.cs">
       <DependentUpon>LogView.xaml</DependentUpon>
     </Compile>

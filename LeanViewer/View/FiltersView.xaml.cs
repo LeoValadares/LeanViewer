@@ -52,7 +52,7 @@ namespace LeanViewer.View
             }
             catch (Exception exception)
             {
-                var msgBox = MessageBox.Show(this, "Houve um erro lendo o arquivo");
+                MessageBox.Show(this, "Houve um erro lendo o arquivo");
             }
         }
 

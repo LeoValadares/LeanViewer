@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using LeanViewer.Model;
 using System.Linq;
+using LeanViewer.Common;
 using Newtonsoft.Json;
 
 namespace LeanViewer.ViewModel
@@ -29,7 +30,10 @@ namespace LeanViewer.ViewModel
 
         private void OnFiltersUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
-            FiltersUpdatedEvent();
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                FiltersUpdatedEvent();
+            }
         }
 
         public bool IsVisible(Log log)
@@ -93,7 +97,7 @@ namespace LeanViewer.ViewModel
         public void RestoreFromFile(string fileContents)
         {
             var filters = JsonConvert.DeserializeObject<List<Filter>>(fileContents);
-            filters.ForEach(x => Filters.Add(x));
+            Filters.AddRange(filters);
         }
 
         public string SerializeCurrentFilters()
