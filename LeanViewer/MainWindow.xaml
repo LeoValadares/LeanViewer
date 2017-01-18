@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
 
         <ListView x:Name="MessagesListView" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,10,10" 
-                  SizeChanged="MessagesListView_SizeChanged" ItemsSource="{Binding Logs}" MouseDoubleClick="MessagesListView_OnMouseDoubleClick">
+                  SizeChanged="MessagesListView_SizeChanged" ItemsSource="{Binding VisibleLogs}" MouseDoubleClick="MessagesListView_OnMouseDoubleClick">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Filter Selected" Click="FilterSelected_OnClick"></MenuItem>

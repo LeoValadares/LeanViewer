@@ -1,12 +1,12 @@
-﻿using System;
+﻿using LeanViewer.Model;
+using LeanViewer.Network;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading;
-using LeanViewer.Model;
-using LeanViewer.Network;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace LeanViewer.ViewModel
 {
@@ -18,7 +18,8 @@ namespace LeanViewer.ViewModel
             get { return _current ?? (_current = new LogViewModel()); }
         }
         private SynchronizationContext _syncContext;
-        public ObservableCollection<LogScreenObject> Logs { get; set; }
+        public  ObservableCollection<LogScreenObject> VisibleLogs { get; set;  }
+        private List<LogScreenObject> _allLogs;
         private HttpServer _httpServer;
         private Thread _httpServerThread;
         private FilterViewModel _filterViewModel;
@@ -26,7 +27,8 @@ namespace LeanViewer.ViewModel
         public LogViewModel()
         {
             _syncContext = SynchronizationContext.Current;
-            Logs = new ObservableCollection<LogScreenObject>();
+            _allLogs = new List<LogScreenObject>();
+            VisibleLogs = new ObservableCollection<LogScreenObject>();
             _filterViewModel = FilterViewModel.Current;
             _filterViewModel.FiltersUpdatedEvent += RescanLogVisibility;
             _httpServer = HttpServer.Current;
@@ -48,27 +50,33 @@ namespace LeanViewer.ViewModel
 
         private void LogSink(Log log)
         {
-            if (!_filterViewModel.IsVisible(log)) return;
             AddLogToScreen(log);
-        }
-
-        private void RescanLogVisibility()
-        {
-            foreach (var logScreenObject in Logs)
-            {
-                logScreenObject.IsVisible = _filterViewModel.IsVisible(logScreenObject.UnderlyingLog);
-            }
+            StoreLog(log);
         }
 
         private void AddLogToScreen(Log log)
         {
+            if (!_filterViewModel.IsVisible(log)) return;
             var logOnScreen = new LogScreenObject(log, true);
-            _syncContext.Send(x => Logs.Add(logOnScreen), null);
+            _syncContext.Send(x => VisibleLogs.Add(logOnScreen), null);
+        }
+
+        private void StoreLog(Log log)
+        {
+            var logOnScreen = new LogScreenObject(log, true);
+            _allLogs.Add(logOnScreen);
+        }
+
+        private void RescanLogVisibility()
+        {
+            Parallel.ForEach<LogScreenObject>(_allLogs, x => x.IsVisible = _filterViewModel.IsVisible(x.UnderlyingLog));
+            VisibleLogs.Clear();
+            _allLogs.Where(x => x.IsVisible).ToList().ForEach(y => VisibleLogs.Add(y));
         }
 
         public void ClearScreen()
         {
-            Logs.Clear();
+            VisibleLogs.Clear();
         }
 
         public void Dispose()
