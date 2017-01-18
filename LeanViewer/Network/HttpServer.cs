@@ -45,7 +45,8 @@ namespace LeanViewer.Network
                 try
                 {
                     var ctx = _httpListener.GetContext();
-                    new Thread(() => ProcessMessage(ctx)).Start();
+                    var thread = new Thread(ProcessMessageThreadStart);
+                    thread.Start(ctx);
                 }
                 catch (Exception) { }
             }
@@ -57,6 +58,12 @@ namespace LeanViewer.Network
             _running = false;
             _httpListener.Close();
             RegisterServerMessage("Bye!!!");
+        }
+
+        public void ProcessMessageThreadStart(object listenerContextParameter)
+        {
+            var listenerContext = (HttpListenerContext)listenerContextParameter;
+            ProcessMessage(listenerContext);
         }
 
         public void ProcessMessage(HttpListenerContext listenerContext)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -37,11 +36,22 @@ namespace LeanViewer.ViewModel
         {
             bool isVisible = true;
             if (Filters.Count < 1) return true;
-            foreach (var filter in Filters)
+
+            var revealFilters = Filters.Where(x => x.VisibilityType== VisibilityType.Reveal);
+            var hideFilters = Filters.Where(x => x.VisibilityType == VisibilityType.Hide);
+
+            if (revealFilters.Any())
             {
-                isVisible &= IsVisible(filter, log);
+                if (revealFilters.Any(x => IsVisible(x, log)))
+                    return true;
+                else if (hideFilters.Count() < 1)
+                    return false; 
             }
-            return isVisible;
+
+            if (hideFilters.All(x => IsVisible(x, log))) 
+                return true;
+            else 
+                return false;
         }
 
         private static bool IsVisible(Filter filter, Log log)

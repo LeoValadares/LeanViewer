@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace LeanViewer.ViewModel
 {
@@ -17,18 +18,18 @@ namespace LeanViewer.ViewModel
         {
             get { return _current ?? (_current = new LogViewModel()); }
         }
-        private SynchronizationContext _syncContext;
-        public  ObservableCollection<LogScreenObject> VisibleLogs { get; set;  }
         private List<LogScreenObject> _allLogs;
+        private static readonly object _visibleLogsLock = new object();
+        public  ObservableCollection<LogScreenObject> VisibleLogs { get; set;  }
         private HttpServer _httpServer;
         private Thread _httpServerThread;
         private FilterViewModel _filterViewModel;
 
         public LogViewModel()
         {
-            _syncContext = SynchronizationContext.Current;
             _allLogs = new List<LogScreenObject>();
             VisibleLogs = new ObservableCollection<LogScreenObject>();
+            BindingOperations.EnableCollectionSynchronization(VisibleLogs, _visibleLogsLock);
             _filterViewModel = FilterViewModel.Current;
             _filterViewModel.FiltersUpdatedEvent += RescanLogVisibility;
             _httpServer = HttpServer.Current;
@@ -58,7 +59,7 @@ namespace LeanViewer.ViewModel
         {
             if (!_filterViewModel.IsVisible(log)) return;
             var logOnScreen = new LogScreenObject(log, true);
-            _syncContext.Send(x => VisibleLogs.Add(logOnScreen), null);
+            VisibleLogs.Add(logOnScreen);
         }
 
         private void StoreLog(Log log)
@@ -76,6 +77,8 @@ namespace LeanViewer.ViewModel
 
         public void ClearScreen()
         {
+            var toRemove = _allLogs.Where(x => VisibleLogs.Contains(x)).ToList();
+            toRemove.ForEach(x => _allLogs.Remove(x));
             VisibleLogs.Clear();
         }
 
