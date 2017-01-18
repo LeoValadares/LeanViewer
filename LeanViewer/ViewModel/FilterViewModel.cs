@@ -38,7 +38,6 @@ namespace LeanViewer.ViewModel
 
         public bool IsVisible(Log log)
         {
-            bool isVisible = true;
             if (Filters.Count < 1) return true;
 
             var revealFilters = Filters.Where(x => x.VisibilityType== VisibilityType.Reveal);
