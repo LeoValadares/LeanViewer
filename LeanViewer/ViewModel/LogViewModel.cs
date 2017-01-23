@@ -20,7 +20,7 @@ namespace LeanViewer.ViewModel
         }
         private List<LogScreenObject> _allLogs;
         private static readonly object _visibleLogsLock = new object();
-        public  ObservableCollection<LogScreenObject> VisibleLogs { get; set;  }
+        public ObservableCollection<LogScreenObject> VisibleLogs { get; set; }
         private HttpServer _httpServer;
         private Thread _httpServerThread;
         private FilterViewModel _filterViewModel;
@@ -61,7 +61,7 @@ namespace LeanViewer.ViewModel
             {
                 if (!_filterViewModel.IsVisible(log)) return;
                 var logOnScreen = new LogScreenObject(log, true);
-                VisibleLogs.Add(logOnScreen); 
+                VisibleLogs.Add(logOnScreen);
             }
         }
 
@@ -77,7 +77,7 @@ namespace LeanViewer.ViewModel
             {
                 Parallel.ForEach<LogScreenObject>(_allLogs, x => x.IsVisible = _filterViewModel.IsVisible(x.UnderlyingLog));
                 VisibleLogs.Clear();
-                _allLogs.Where(x => x.IsVisible).ToList().ForEach(y => VisibleLogs.Add(y)); 
+                _allLogs.AsParallel().AsOrdered().Where(x => x.IsVisible).ToList().ForEach(y => VisibleLogs.Add(y));
             }
         }
 
@@ -86,8 +86,12 @@ namespace LeanViewer.ViewModel
             lock (_visibleLogsLock)
             {
                 var toRemove = _allLogs.Where(x => VisibleLogs.Contains(x)).ToList();
-                toRemove.ForEach(x => _allLogs.Remove(x));
-                VisibleLogs.Clear(); 
+                Parallel.ForEach(toRemove, item =>
+                {
+                    _allLogs.Remove(item);
+                });
+                //toRemove.ForEach(x => _allLogs.Remove(x));
+                VisibleLogs.Clear();
             }
         }
 
